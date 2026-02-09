@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Teddy Day</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Comic Neue', cursive;
+}
+
+body{
+  height:100vh;
+  background:
+    radial-gradient(circle at 20% 30%, #ffe6ef, transparent 40%),
+    radial-gradient(circle at 80% 70%, #fff1d6, transparent 40%),
+    #fff8f0;
+  overflow:hidden;
+}
+
+.container{
+  height:100%;
+  position:relative;
+  padding:20px;
+}
+
+/* top text */
+.text{
+  text-align:center;
+  font-size:1.3rem;
+  color:#5a3b2e;
+  margin-top:20px;
+}
+
+.hint{
+  font-size:0.95rem;
+  opacity:0.6;
+  margin-top:6px;
+}
+
+/* teddy play zone */
+.playzone{
+  position:absolute;
+  top:140px;
+  left:0;
+  right:0;
+  bottom:260px;
+}
+
+/* teddy */
+.teddy{
+  width:140px;
+  height:170px;
+  background:#c49a6c;
+  border-radius:50% 50% 45% 45%;
+  position:absolute;
+  box-shadow:0 10px 20px rgba(0,0,0,0.15);
+  transition:transform 0.35s ease, left 0.35s ease, top 0.35s ease;
+}
+
+.teddy::before,
+.teddy::after{
+  content:'';
+  position:absolute;
+  width:50px;
+  height:50px;
+  background:#c49a6c;
+  border-radius:50%;
+  top:-15px;
+}
+.teddy::before{left:-15px;}
+.teddy::after{right:-15px;}
+
+.eye{
+  position:absolute;
+  top:60px;
+  width:8px;
+  height:8px;
+  background:#3a251b;
+  border-radius:50%;
+}
+.eye.left{left:45px;}
+.eye.right{right:45px;}
+
+.nose{
+  position:absolute;
+  top:75px;
+  left:50%;
+  transform:translateX(-50%);
+  width:12px;
+  height:8px;
+  background:#3a251b;
+  border-radius:50%;
+}
+
+/* catch message */
+.catch{
+  position:absolute;
+  bottom:190px;
+  width:100%;
+  text-align:center;
+  font-size:1.25rem;
+  color:#5a3b2e;
+  opacity:0;
+  transition:opacity 1.2s ease;
+  padding:0 20px;
+}
+
+/* main message */
+.message{
+  position:absolute;
+  bottom:120px;
+  width:100%;
+  text-align:center;
+  font-size:1.2rem;
+  color:#5a3b2e;
+  opacity:0;
+  transition:opacity 1.4s ease;
+  padding:0 20px;
+}
+
+.end{
+  position:absolute;
+  bottom:50px;
+  width:100%;
+  text-align:center;
+  opacity:0;
+  transition:opacity 1.4s ease;
+}
+
+.end .name{
+  font-size:1.4rem;
+  font-weight:bold;
+}
+
+.end .small{
+  font-size:0.95rem;
+  opacity:0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="text" id="topText">
+    He wanted to say hi 🧸
+    <div class="hint" id="hint">He’s a little playful though…</div>
+  </div>
+
+  <div class="playzone" id="zone">
+    <div class="teddy" id="teddy">
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+      <div class="nose"></div>
+    </div>
+  </div>
+
+  <div class="catch" id="catchMsg">
+    Hey! You caught me 😳<br>
+    I guess I can’t run from you.
+  </div>
+
+  <div class="message" id="message">
+    I thought you deserved<br>
+    something playful today.<br><br>
+    Because loving you<br>
+    isn’t always serious —<br>
+    it’s fun 💛
+  </div>
+
+  <div class="end" id="end">
+    <div class="name">For Moulima 🧸</div>
+    <div class="small">Happy Teddy Day</div>
+  </div>
+
+</div>
+
+<script>
+const teddy = document.getElementById("teddy");
+const zone = document.getElementById("zone");
+const topText = document.getElementById("topText");
+const hint = document.getElementById("hint");
+const catchMsg = document.getElementById("catchMsg");
+const message = document.getElementById("message");
+const end = document.getElementById("end");
+
+let escapes = 0;
+let caught = false;
+
+function moveTeddy(){
+  const z = zone.getBoundingClientRect();
+  const maxX = z.width - 160;
+  const maxY = z.height - 200;
+
+  teddy.style.left = Math.random() * maxX + "px";
+  teddy.style.top = Math.random() * maxY + "px";
+}
+
+moveTeddy();
+
+teddy.addEventListener("touchstart",()=>{
+  if(caught) return;
+
+  escapes++;
+  if(navigator.vibrate) navigator.vibrate(25);
+
+  if(escapes < 4){
+    teddy.style.transform="rotate("+(Math.random()*18-9)+"deg)";
+    moveTeddy();
+
+    topText.firstChild.textContent =
+      escapes === 1
+        ? "He’s shy… or maybe teasing 😜"
+        : "He’s enjoying this too much 😆";
+
+  }else{
+    caught = true;
+    teddy.style.transform="scale(1.1)";
+    hint.style.opacity="0";
+    topText.firstChild.textContent="Okay okay… you win 🧸";
+
+    setTimeout(()=>{
+      catchMsg.style.opacity="1";
+    },400);
+
+    setTimeout(()=>{
+      message.style.opacity="1";
+    },1800);
+
+    setTimeout(()=>{
+      end.style.opacity="1";
+      if(navigator.vibrate) navigator.vibrate([40,60,40]);
+    },3600);
+  }
+});
+</script>
+
+</body>
+</html>
