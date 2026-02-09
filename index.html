@@ -2,245 +2,377 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Teddy Day</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<title>Happy Teddy Day</title>
 
 <style>
+
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Comic Neue', cursive;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:system-ui,sans-serif;
+-webkit-tap-highlight-color:transparent;
 }
 
 body{
-  height:100vh;
-  background:
-    radial-gradient(circle at 20% 30%, #ffe6ef, transparent 40%),
-    radial-gradient(circle at 80% 70%, #fff1d6, transparent 40%),
-    #fff8f0;
-  overflow:hidden;
+background:linear-gradient(180deg,#ffd6e6,#ffeaf3);
+overflow:hidden;
 }
 
-.container{
-  height:100%;
-  position:relative;
-  padding:20px;
+/* ---------- PAGES ---------- */
+
+.page{
+position:absolute;
+width:100%;
+height:100%;
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
+z-index:2;
+transform:translateX(100%);
+transition:.5s ease;
 }
 
-/* top text */
-.text{
-  text-align:center;
-  font-size:1.3rem;
-  color:#5a3b2e;
-  margin-top:20px;
+.page.active{
+display:flex;
+transform:translateX(0);
 }
 
-.hint{
-  font-size:0.95rem;
-  opacity:0.6;
-  margin-top:6px;
+h1{font-size:26px;margin-bottom:10px;}
+p{font-size:16px;max-width:320px;margin-bottom:18px;opacity:.9;}
+
+button{
+padding:14px 26px;
+border:none;
+border-radius:30px;
+background:#ff6fa5;
+color:white;
+font-size:16px;
+box-shadow:0 6px 14px rgba(0,0,0,.15);
 }
 
-/* teddy play zone */
-.playzone{
-  position:absolute;
-  top:140px;
-  left:0;
-  right:0;
-  bottom:260px;
+button:active{transform:scale(.95);}
+
+/* ---------- GIF ---------- */
+
+.gif{
+width:200px;
+border-radius:16px;
+box-shadow:0 6px 16px rgba(0,0,0,.15);
 }
 
-/* teddy */
+/* ---------- TEDDY GAME ---------- */
+
+.playArea{
+position:relative;
+width:100%;
+height:55vh;
+}
+
 .teddy{
-  width:140px;
-  height:170px;
-  background:#c49a6c;
-  border-radius:50% 50% 45% 45%;
-  position:absolute;
-  box-shadow:0 10px 20px rgba(0,0,0,0.15);
-  transition:transform 0.35s ease, left 0.35s ease, top 0.35s ease;
+position:absolute;
+font-size:90px;
+cursor:pointer;
+transition:.25s;
 }
 
-.teddy::before,
-.teddy::after{
-  content:'';
-  position:absolute;
-  width:50px;
-  height:50px;
-  background:#c49a6c;
-  border-radius:50%;
-  top:-15px;
-}
-.teddy::before{left:-15px;}
-.teddy::after{right:-15px;}
-
-.eye{
-  position:absolute;
-  top:60px;
-  width:8px;
-  height:8px;
-  background:#3a251b;
-  border-radius:50%;
-}
-.eye.left{left:45px;}
-.eye.right{right:45px;}
-
-.nose{
-  position:absolute;
-  top:75px;
-  left:50%;
-  transform:translateX(-50%);
-  width:12px;
-  height:8px;
-  background:#3a251b;
-  border-radius:50%;
+.dialog{
+position:absolute;
+background:white;
+padding:8px 12px;
+border-radius:14px;
+font-size:14px;
+box-shadow:0 4px 8px rgba(0,0,0,.15);
 }
 
-/* catch message */
-.catch{
-  position:absolute;
-  bottom:190px;
-  width:100%;
-  text-align:center;
-  font-size:1.25rem;
-  color:#5a3b2e;
-  opacity:0;
-  transition:opacity 1.2s ease;
-  padding:0 20px;
+/* ---------- FX LAYER ---------- */
+
+.fxLayer{
+position:fixed;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:1;
+overflow:hidden;
 }
 
-/* main message */
-.message{
-  position:absolute;
-  bottom:120px;
-  width:100%;
-  text-align:center;
-  font-size:1.2rem;
-  color:#5a3b2e;
-  opacity:0;
-  transition:opacity 1.4s ease;
-  padding:0 20px;
+.fx{
+position:absolute;
+font-size:18px;
+opacity:.75;
+animation:fall linear forwards;
 }
 
-.end{
-  position:absolute;
-  bottom:50px;
-  width:100%;
-  text-align:center;
-  opacity:0;
-  transition:opacity 1.4s ease;
+@keyframes fall{
+from{transform:translateY(-10vh);}
+to{transform:translateY(110vh);}
 }
 
-.end .name{
-  font-size:1.4rem;
-  font-weight:bold;
+/* ---------- SPARKLE ---------- */
+
+.spark{
+position:absolute;
+font-size:18px;
+animation:spark .8s ease forwards;
 }
 
-.end .small{
-  font-size:0.95rem;
-  opacity:0.8;
+@keyframes spark{
+to{
+transform:translate(var(--x),var(--y));
+opacity:0;
 }
+}
+/* ---------- FLIP CARD ---------- */
+
+.flipCard{
+width:200px;
+height:auto;
+perspective:1000px;
+}
+
+.flipInner{
+position:relative;
+width:100%;
+transition:transform .6s;
+transform-style:preserve-3d;
+}
+
+.flipCard.flip .flipInner{
+transform:rotateY(180deg);
+}
+
+.flipFront,
+.flipBack{
+position:absolute;
+width:100%;
+backface-visibility:hidden;
+}
+
+.flipBack{
+transform:rotateY(180deg);
+}
+/* ---------- FINAL PAGE ---------- */
+
+.final{
+animation:glow 3s infinite alternate;
+}
+
+@keyframes glow{
+from{filter:brightness(1);}
+to{filter:brightness(1.2);}
+}
+
+.final h1{
+animation:bounce 2s infinite;
+}
+
+@keyframes bounce{
+50%{transform:translateY(-6px);}
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<audio id="music" src="music.mp3" loop></audio>
 
-  <div class="text" id="topText">
-    He wanted to say hi 🧸
-    <div class="hint" id="hint">He’s a little playful though…</div>
-  </div>
+<div class="fxLayer" id="fxLayer"></div>
 
-  <div class="playzone" id="zone">
-    <div class="teddy" id="teddy">
-      <div class="eye left"></div>
-      <div class="eye right"></div>
-      <div class="nose"></div>
+<!-- PAGE 1 -->
+<div class="page active">
+<h1>Happy Teddy Day 🧸</h1>
+<p>A tiny surprise journey made just for you…</p>
+<button onclick="startExperience()">Start</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+<h1>A Teddy Hug For You</h1>
+<p>If hugs could travel through screens, this teddy would wrap you in the warmest one.</p>
+<img class="gif" src="hug.gif">
+<button onclick="nextPage()">Next Surprise</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page">
+<h1>Play Time!</h1>
+<p>Catch the teddy!</p>
+
+<div class="playArea" id="playArea">
+<div class="dialog" id="dialog">Play with me!</div>
+<div class="teddy" id="teddy">🧸</div>
+</div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page">
+<h1>Sweet Message</h1>
+<p>May your days be warm, cozy, and full of smiles — just like a teddy hug.</p>
+<button onclick="nextPage()">Final Surprise</button>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page final">
+<h1>You’re My Favorite Comfort</h1>
+<p>Sending happy teddy energy your way. Stay bright and smiling!</p>
+<div class="flipCard" onclick="this.classList.toggle('flip')">
+  <div class="flipInner">
+
+    <div class="flipFront">
+      <img class="gif" src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif">
     </div>
-  </div>
 
-  <div class="catch" id="catchMsg">
-    Hey! You caught me 😳<br>
-    I guess I can’t run from you.
-  </div>
+    <div class="flipBack">
+      <img class="gif" src="1.jpg">
+    </div>
 
-  <div class="message" id="message">
-    I thought you deserved<br>
-    something playful today.<br><br>
-    Because loving you<br>
-    isn’t always serious —<br>
-    it’s fun 💛
   </div>
-
-  <div class="end" id="end">
-    <div class="name">For Moulima 🧸</div>
-    <div class="small">Happy Teddy Day</div>
-  </div>
-
+</div>
 </div>
 
 <script>
-const teddy = document.getElementById("teddy");
-const zone = document.getElementById("zone");
-const topText = document.getElementById("topText");
-const hint = document.getElementById("hint");
-const catchMsg = document.getElementById("catchMsg");
-const message = document.getElementById("message");
-const end = document.getElementById("end");
 
-let escapes = 0;
-let caught = false;
+/* ---------- MUSIC ---------- */
 
-function moveTeddy(){
-  const z = zone.getBoundingClientRect();
-  const maxX = z.width - 160;
-  const maxY = z.height - 200;
-
-  teddy.style.left = Math.random() * maxX + "px";
-  teddy.style.top = Math.random() * maxY + "px";
+function startExperience(){
+music.volume=0;
+music.play().catch(()=>{});
+fadeMusic();
+nextPage();
 }
 
-moveTeddy();
+function fadeMusic(){
+let v=0;
+let f=setInterval(()=>{
+v+=0.05;
+music.volume=v;
+if(v>=0.5) clearInterval(f);
+},200);
+}
 
-teddy.addEventListener("touchstart",()=>{
-  if(caught) return;
+/* ---------- PAGE NAV ---------- */
 
-  escapes++;
-  if(navigator.vibrate) navigator.vibrate(25);
+const pages=document.querySelectorAll(".page");
+let index=0;
 
-  if(escapes < 4){
-    teddy.style.transform="rotate("+(Math.random()*18-9)+"deg)";
-    moveTeddy();
+function nextPage(){
+if(index<pages.length-1){
+pages[index].classList.remove("active");
+index++;
+pages[index].classList.add("active");
 
-    topText.firstChild.textContent =
-      escapes === 1
-        ? "He’s shy… or maybe teasing 😜"
-        : "He’s enjoying this too much 😆";
+confetti();
 
-  }else{
-    caught = true;
-    teddy.style.transform="scale(1.1)";
-    hint.style.opacity="0";
-    topText.firstChild.textContent="Okay okay… you win 🧸";
+if(index===2) resetChase();
+}
+}
 
-    setTimeout(()=>{
-      catchMsg.style.opacity="1";
-    },400);
+/* ---------- SWIPE NAV ---------- */
 
-    setTimeout(()=>{
-      message.style.opacity="1";
-    },1800);
-
-    setTimeout(()=>{
-      end.style.opacity="1";
-      if(navigator.vibrate) navigator.vibrate([40,60,40]);
-    },3600);
-  }
+let startX=0;
+document.addEventListener("touchstart",e=>startX=e.touches[0].clientX);
+document.addEventListener("touchend",e=>{
+let dx=e.changedTouches[0].clientX-startX;
+if(dx<-60) nextPage();
 });
+
+/* ---------- TEDDY GAME ---------- */
+
+const teddy=document.getElementById("teddy");
+const playArea=document.getElementById("playArea");
+const dialog=document.getElementById("dialog");
+
+let catches=0;
+
+function resetChase(){
+catches=0;
+moveCenter();
+}
+
+function moveCenter(){
+setPos(playArea.clientWidth/2-40,playArea.clientHeight/2-40);
+}
+
+function setPos(x,y){
+teddy.style.left=x+"px";
+teddy.style.top=y+"px";
+dialog.style.left=(x-90)+"px";
+dialog.style.top=y+"px";
+}
+
+function randomMove(){
+setPos(
+Math.random()*(playArea.clientWidth-80),
+Math.random()*(playArea.clientHeight-80)
+);
+}
+
+teddy.addEventListener("click",e=>{
+sparkBurst(e.clientX,e.clientY);
+catches++;
+
+if(catches<5) randomMove();
+else{
+dialog.innerText="Yeah! You caught me!";
+setTimeout(nextPage,900);
+}
+});
+
+/* ---------- SPARK BURST ---------- */
+
+function sparkBurst(x,y){
+for(let i=0;i<10;i++){
+let s=document.createElement("div");
+s.className="spark";
+s.textContent="✨";
+s.style.left=x+"px";
+s.style.top=y+"px";
+s.style.setProperty("--x",(Math.random()*80-40)+"px");
+s.style.setProperty("--y",(Math.random()*80-40)+"px");
+document.body.appendChild(s);
+setTimeout(()=>s.remove(),800);
+}
+}
+
+/* ---------- CONFETTI ---------- */
+
+function confetti(){
+for(let i=0;i<8;i++){
+spawnFX(true);
+}
+}
+
+/* ---------- CONTINUOUS FX ---------- */
+
+const fxLayer=document.getElementById("fxLayer");
+
+function spawnFX(extra=false){
+
+const el=document.createElement("div");
+el.className="fx";
+
+let pool=["🌸","🌹"];
+
+if(index===4) pool.push("💗","💖");
+
+el.textContent=pool[Math.floor(Math.random()*pool.length)];
+
+el.style.left=Math.random()*100+"vw";
+el.style.animationDuration=(5+Math.random()*5)+"s";
+
+fxLayer.appendChild(el);
+
+setTimeout(()=>el.remove(),10000);
+}
+
+setInterval(spawnFX,700);
+
 </script>
 
 </body>
